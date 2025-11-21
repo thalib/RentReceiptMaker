@@ -1,85 +1,145 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { ref, computed, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
+import AppHeader from './components/AppHeader.vue';
+import ReceiptForm from './components/ReceiptForm.vue';
+import ReceiptCanvas from './components/ReceiptCanvas.vue';
+import ActionButtons from './components/ActionButtons.vue';
+import { useReceiptStore } from './stores/receiptStore';
+import { useCanvasExport } from './composables/useCanvasExport';
+import { useResponsive } from './composables/useResponsive';
+
+const receiptStore = useReceiptStore();
+const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
+const { exportAndDownload } = useCanvasExport();
+const { isMobile } = useResponsive();
+
+const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null);
+const hasGenerated = ref(false);
+
+// Validate form
+const isFormValid = computed(() => {
+  return (
+    formData.value.tenantName.trim() !== '' &&
+    formData.value.landlordName.trim() !== '' &&
+    formData.value.landlordAddress.trim() !== '' &&
+    formData.value.landlordPAN.length === 10 &&
+    formData.value.propertyAddress.trim() !== '' &&
+    formData.value.rentAmount !== null &&
+    formData.value.rentAmount > 0 &&
+    formData.value.rentalPeriodStart !== '' &&
+    formData.value.rentalPeriodEnd !== '' &&
+    formData.value.paymentDate !== ''
+  );
+});
+
+async function handleGenerate() {
+  if (isFormValid.value) {
+    hasGenerated.value = true;
+    // Scroll to canvas on mobile
+    if (isMobile.value) {
+      setTimeout(() => {
+        document.querySelector('.receipt-canvas')?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+  }
+}
+
+async function handleDownload() {
+  if (canvasComponent.value?.canvasRef && receiptNumber.value) {
+    const success = await exportAndDownload(canvasComponent.value.canvasRef, receiptNumber.value);
+    if (success) {
+      alert('Receipt downloaded successfully!');
+    } else {
+      alert('Failed to download receipt. Please try again.');
+    }
+  }
+}
+
+function handleClear() {
+  receiptStore.clearForm();
+  hasGenerated.value = false;
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="app">
+    <AppHeader />
+    
+    <main class="main-content">
+      <!-- Mobile: Vertical Layout -->
+      <div v-if="isMobile" class="mobile-layout">
+        <ReceiptForm @generate="handleGenerate" />
+        <ReceiptCanvas ref="canvasComponent" />
+      </div>
+      
+      <!-- Desktop: Split Layout -->
+      <div v-else class="desktop-layout">
+        <div class="form-pane">
+          <ReceiptForm @generate="handleGenerate" />
+        </div>
+        <div class="canvas-pane">
+          <ReceiptCanvas ref="canvasComponent" />
+        </div>
+      </div>
+    </main>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
+    <ActionButtons
+      :has-data="hasData"
+      :is-valid="isFormValid"
+      :can-download="hasGenerated"
+      @clear="handleClear"
+      @download="handleDownload"
+      @generate="handleGenerate"
+    />
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f7fafc;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.main-content {
+  flex: 1;
+  overflow: auto;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+/* Mobile Layout */
+.mobile-layout {
+  display: flex;
+  flex-direction: column;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+/* Desktop Layout */
+.desktop-layout {
+  display: grid;
+  grid-template-columns: 40% 60%;
+  min-height: calc(100vh - 200px);
+  gap: 0;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
+.form-pane {
+  overflow-y: auto;
+  background: white;
+  border-right: 1px solid #e2e8f0;
 }
 
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
+.canvas-pane {
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: calc(100vh - 200px);
+  background: #f7fafc;
 }
 
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
+@media (max-width: 767px) {
+  .canvas-pane {
+    position: relative;
+    height: auto;
   }
 }
 </style>
