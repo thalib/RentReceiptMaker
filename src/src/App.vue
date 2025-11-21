@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import AppHeader from './components/AppHeader.vue';
 import ReceiptForm from './components/ReceiptForm.vue';
 import ReceiptCanvas from './components/ReceiptCanvas.vue';
 import ActionButtons from './components/ActionButtons.vue';
 import { useReceiptStore } from './stores/receiptStore';
-import { useCanvasExport } from './composables/useCanvasExport';
+import { useReceiptGeneration } from './composables/useReceiptGeneration';
 import { useResponsive } from './composables/useResponsive';
 
 const receiptStore = useReceiptStore();
 const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
-const { exportAndDownload } = useCanvasExport();
+const { generateReceipt, downloadReceiptOnly } = useReceiptGeneration();
 const { isMobile } = useResponsive();
 
 const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null);
@@ -34,20 +34,36 @@ const isFormValid = computed(() => {
 });
 
 async function handleGenerate() {
-  if (isFormValid.value) {
-    hasGenerated.value = true;
-    // Scroll to canvas on mobile
-    if (isMobile.value) {
-      setTimeout(() => {
-        document.querySelector('.receipt-canvas')?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+  if (isFormValid.value && canvasComponent.value?.canvasRef) {
+    const success = await generateReceipt(
+      formData.value,
+      canvasComponent.value.canvasRef,
+      false // Don't auto-download, let user click download button
+    );
+    
+    if (success) {
+      hasGenerated.value = true;
+      alert('Receipt generated successfully! You can now download it.');
+      
+      // Scroll to canvas on mobile
+      if (isMobile.value) {
+        setTimeout(() => {
+          document.querySelector('.receipt-canvas')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } else {
+      alert('Failed to generate receipt. Please check your data and try again.');
     }
   }
 }
 
 async function handleDownload() {
   if (canvasComponent.value?.canvasRef && receiptNumber.value) {
-    const success = await exportAndDownload(canvasComponent.value.canvasRef, receiptNumber.value);
+    const success = await downloadReceiptOnly(
+      canvasComponent.value.canvasRef,
+      receiptNumber.value
+    );
+    
     if (success) {
       alert('Receipt downloaded successfully!');
     } else {
