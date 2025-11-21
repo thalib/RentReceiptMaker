@@ -117,13 +117,8 @@ function convertIntegerToWords(num: number): string {
 }
 
 /**
- * Clean up extra spaces in the result
+ * Export cleaned version (with extra spaces removed)
  */
-function cleanWords(words: string): string {
-  return words.replace(/\s+/g, ' ').trim();
-}
-
-// Export cleaned version
 export function numberToWordsClean(amount: number): string {
-  return cleanWords(numberToWords(amount));
+  return numberToWords(amount).replace(/\s+/g, ' ').trim();
 }

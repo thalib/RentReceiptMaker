@@ -41,22 +41,18 @@ export function useReceiptCanvas() {
    * Set up canvas context with proper scaling for high-DPI displays
    */
   function setupCanvas(canvas: HTMLCanvasElement): CanvasRenderingContext2D | null {
-    const dpr = window.devicePixelRatio || 1;
     const config = DEFAULT_CONFIG;
 
     // Set display size (CSS pixels)
     canvas.style.width = `${config.width / 2}px`;
     canvas.style.height = `${config.height / 2}px`;
 
-    // Set actual size in memory (scaled to account for DPR)
+    // Set actual size in memory (2x resolution for high quality)
     canvas.width = config.width;
     canvas.height = config.height;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
-
-    // Scale context to match DPR
-    // ctx.scale(dpr, dpr);
 
     // Set default styles
     ctx.textBaseline = 'top';

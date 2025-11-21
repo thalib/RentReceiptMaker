@@ -5,14 +5,17 @@ import AppHeader from './components/AppHeader.vue';
 import ReceiptForm from './components/ReceiptForm.vue';
 import ReceiptCanvas from './components/ReceiptCanvas.vue';
 import ActionButtons from './components/ActionButtons.vue';
+import ToastContainer from './components/ToastContainer.vue';
 import { useReceiptStore } from './stores/receiptStore';
 import { useReceiptGeneration } from './composables/useReceiptGeneration';
 import { useResponsive } from './composables/useResponsive';
+import { useToast } from './composables/useToast';
 
 const receiptStore = useReceiptStore();
 const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
 const { generateReceipt, downloadReceiptOnly } = useReceiptGeneration();
 const { isMobile } = useResponsive();
+const toast = useToast();
 
 const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null);
 const hasGenerated = ref(false);
@@ -43,7 +46,7 @@ async function handleGenerate() {
     
     if (success) {
       hasGenerated.value = true;
-      alert('Receipt generated successfully! You can now download it.');
+      toast.success('Receipt generated successfully! You can now download it.');
       
       // Scroll to canvas on mobile
       if (isMobile.value) {
@@ -52,7 +55,7 @@ async function handleGenerate() {
         }, 100);
       }
     } else {
-      alert('Failed to generate receipt. Please check your data and try again.');
+      toast.error('Failed to generate receipt. Please check your data and try again.');
     }
   }
 }
@@ -65,9 +68,9 @@ async function handleDownload() {
     );
     
     if (success) {
-      alert('Receipt downloaded successfully!');
+      toast.success('Receipt downloaded successfully!');
     } else {
-      alert('Failed to download receipt. Please try again.');
+      toast.error('Failed to download receipt. Please try again.');
     }
   }
 }
@@ -80,6 +83,7 @@ function handleClear() {
 
 <template>
   <div class="app">
+    <ToastContainer />
     <AppHeader />
     
     <main class="main-content">
