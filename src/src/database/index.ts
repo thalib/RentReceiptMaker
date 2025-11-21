@@ -2,7 +2,7 @@
  * RxDB database initialization and setup
  */
 
-import { createRxDatabase, addRxPlugin } from 'rxdb';
+import { createRxDatabase } from 'rxdb';
 import { getRxStorageDexie } from 'rxdb/plugins/storage-dexie';
 import { draftSchema, receiptSchema } from './schemas';
 import type { DraftData, ReceiptData } from '../types/receipt';

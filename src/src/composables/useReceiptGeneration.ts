@@ -2,13 +2,11 @@
  * Composable for receipt generation workflow
  */
 
-import { useReceiptStore } from '../stores/receiptStore';
 import { useDatabase } from './useDatabase';
 import { useCanvasExport } from './useCanvasExport';
 import type { FormData } from '../types/receipt';
 
 export function useReceiptGeneration() {
-  const receiptStore = useReceiptStore();
   const { saveReceipt, clearDraft } = useDatabase();
   const { exportAndDownload, canvasToDataURL } = useCanvasExport();
 

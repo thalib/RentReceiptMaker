@@ -2,7 +2,7 @@
  * Composable for database operations
  */
 
-import { initDatabase, getDatabase, type ReceiptDatabase } from '../database';
+import { initDatabase, type ReceiptDatabase } from '../database';
 import type { DraftData, ReceiptData } from '../types/receipt';
 import { RECEIPT_PREFIX } from '../utils/constants';
 import { v4 as uuidv4 } from 'uuid';

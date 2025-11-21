@@ -164,7 +164,7 @@ export const validators = {
 /**
  * Get error messages for specific validation failures
  */
-export function getErrorMessage(field: string, rule: string, value?: any): string {
+export function getErrorMessage(field: string, rule: string): string {
   const messages: Record<string, Record<string, string>> = {
     tenantName: {
       required: 'Tenant name is required',
