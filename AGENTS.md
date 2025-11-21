@@ -12,12 +12,18 @@ The official and definitive requirements for this application are documented in 
 
 ## 3. Technical Stack
 
-The following technologies are mandated for this project. Do not introduce new libraries or frameworks without updating the specification.
+The following technologies are mandated for this project. Do not introduce new libraries or frameworks without updating the specification:
 
--   **Framework**: **Vue 3** (using the Composition API).
--   **Local Database**: **RxDB**. All data persistence must be handled through RxDB to ensure offline-first capability.
--   **Build Tool**: **Vite**. All project setup and build configurations should be managed through Vite scripts.
--   **Language**: **JavaScript** or **TypeScript**. (If TypeScript is used, maintain strict type safety).
+- **Framework**: Vue 3 using the Composition API with `<script setup>`. Use composable functions for modular, reusable logic and clean code organization.
+- **State Management**: Pinia as the official state management library for Vue 3, providing scalable and type-safe global/local state handling.
+- **Local Database**: RxDB for offline-first data persistence, leveraging its reactive API to synchronize and persist receipt data in IndexedDB.
+- **Build Tool**: Vite for fast bundling, dev server, and build optimizations.
+- **Language**: TypeScript with strict type checking is strongly recommended for maintainability and reliability. JavaScript may be used for MVP, but migrate to TypeScript as soon as possible.
+- **CSS & Styling**: Tailwind CSS for utility-first, responsive styling and rapid UI development.
+- **Routing**: Vue Router (optional) for client-side navigation if expanding beyond a single SPA view.
+- **Form Handling & Validation**: VeeValidate or custom composables for lightweight, reactive form validation.
+- **Testing**: Vitest or Jest with Vue Test Utils for unit and integration testing.
+
 
 ## 4. Architectural Principles
 
