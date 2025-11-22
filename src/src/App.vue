@@ -9,13 +9,11 @@ import ActionButtons from './components/ActionButtons.vue';
 import ToastContainer from './components/ToastContainer.vue';
 import { useReceiptStore } from './stores/receiptStore';
 import { useReceiptGeneration } from './composables/useReceiptGeneration';
-import { useResponsive } from './composables/useResponsive';
 import { useToast } from './composables/useToast';
 
 const receiptStore = useReceiptStore();
 const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
 const { generateReceipt, downloadReceiptOnly } = useReceiptGeneration();
-const { isMobile } = useResponsive();
 const toast = useToast();
 
 const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null);
@@ -38,25 +36,34 @@ const isFormValid = computed(() => {
 });
 
 async function handleGenerate() {
-  if (isFormValid.value && canvasComponent.value?.canvasRef) {
-    const success = await generateReceipt(
-      formData.value,
-      canvasComponent.value.canvasRef,
-      false // Don't auto-download, let user click download button
-    );
+  if (isFormValid.value) {
+    // Set hasGenerated first so the canvas gets rendered
+    hasGenerated.value = true;
     
-    if (success) {
-      hasGenerated.value = true;
-      toast.success('Receipt generated successfully! You can now download it.');
+    // Wait for next tick to ensure canvas is rendered
+    await new Promise(resolve => setTimeout(resolve, 100));
+    
+    if (canvasComponent.value?.canvasRef) {
+      const success = await generateReceipt(
+        formData.value,
+        canvasComponent.value.canvasRef,
+        false // Don't auto-download, let user click download button
+      );
       
-      // Scroll to canvas on mobile
-      if (isMobile.value) {
+      if (success) {
+        toast.success('Receipt generated successfully! You can now download it.');
+        
+        // Scroll to canvas
         setTimeout(() => {
-          document.querySelector('.receipt-canvas')?.scrollIntoView({ behavior: 'smooth' });
+          document.querySelector('.receipt-canvas-container')?.scrollIntoView({ behavior: 'smooth' });
         }, 100);
+      } else {
+        toast.error('Failed to generate receipt. Please check your data and try again.');
+        hasGenerated.value = false;
       }
     } else {
-      toast.error('Failed to generate receipt. Please check your data and try again.');
+      toast.error('Canvas not ready. Please try again.');
+      hasGenerated.value = false;
     }
   }
 }
@@ -80,89 +87,59 @@ function handleClear() {
   receiptStore.clearForm();
   hasGenerated.value = false;
 }
+
+async function handleCopy() {
+  if (canvasComponent.value?.canvasRef) {
+    try {
+      const canvas = canvasComponent.value.canvasRef;
+      canvas.toBlob(async (blob) => {
+        if (blob) {
+          try {
+            await navigator.clipboard.write([
+              new ClipboardItem({ 'image/png': blob })
+            ]);
+            toast.success('Receipt copied to clipboard!');
+          } catch {
+            toast.error('Failed to copy receipt. Your browser may not support this feature.');
+          }
+        }
+      }, 'image/png');
+    } catch {
+      toast.error('Failed to copy receipt. Please try again.');
+    }
+  }
+}
 </script>
 
 <template>
-  <div class="app">
+  <div class="min-h-screen flex flex-col bg-gray-50">
     <ToastContainer />
     <AppHeader />
     
-    <main class="main-content">
-      <!-- Mobile: Vertical Layout -->
-      <div v-if="isMobile" class="mobile-layout">
-        <ReceiptForm @generate="handleGenerate" />
-        <ReceiptCanvas ref="canvasComponent" />
-      </div>
-      
-      <!-- Desktop: Split Layout -->
-      <div v-else class="desktop-layout">
-        <div class="form-pane">
-          <ReceiptForm @generate="handleGenerate" />
-        </div>
-        <div class="canvas-pane">
+    <main class="flex-1 w-full">
+      <div class="w-full flex flex-col">
+        <ReceiptForm 
+          @generate="handleGenerate"
+          @clear="handleClear"
+          :has-generated="hasGenerated"
+        />
+        
+        <div v-if="hasGenerated" class="w-full">
           <ReceiptCanvas ref="canvasComponent" />
+          
+          <ActionButtons
+            :has-data="hasData"
+            :is-valid="isFormValid"
+            :can-download="hasGenerated"
+            @download="handleDownload"
+            @copy="handleCopy"
+          />
         </div>
       </div>
     </main>
-
-    <ActionButtons
-      :has-data="hasData"
-      :is-valid="isFormValid"
-      :can-download="hasGenerated"
-      @clear="handleClear"
-      @download="handleDownload"
-      @generate="handleGenerate"
-    />
 
     <AppFooter />
   </div>
 </template>
 
-<style scoped>
-.app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background: #f7fafc;
-}
 
-.main-content {
-  flex: 1;
-  overflow: auto;
-}
-
-/* Mobile Layout */
-.mobile-layout {
-  display: flex;
-  flex-direction: column;
-}
-
-/* Desktop Layout */
-.desktop-layout {
-  display: grid;
-  grid-template-columns: 40% 60%;
-  min-height: calc(100vh - 200px);
-  gap: 0;
-}
-
-.form-pane {
-  overflow-y: auto;
-  background: white;
-  border-right: 1px solid #e2e8f0;
-}
-
-.canvas-pane {
-  overflow-y: auto;
-  position: sticky;
-  top: 0;
-  height: calc(100vh - 200px);
-  background: #f7fafc;
-}
-
-@media (max-width: 767px) {
-  .canvas-pane {
-    position: relative;
-    height: auto;
-  }
-}
-</style>

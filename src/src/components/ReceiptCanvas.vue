@@ -1,8 +1,8 @@
 <template>
-  <div class="receipt-canvas-container">
-    <h2 class="canvas-title">Receipt Preview</h2>
-    <div class="canvas-wrapper">
-      <canvas ref="canvasRef" class="receipt-canvas"></canvas>
+  <div class="w-full max-w-4xl mx-auto px-4 py-6 receipt-canvas-container">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">Receipt Preview</h2>
+    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-4 md:p-6 flex justify-center overflow-auto shadow-lg">
+      <canvas ref="canvasRef" class="border-2 border-gray-300 shadow-xl bg-white max-w-full h-auto rounded-lg"></canvas>
     </div>
   </div>
 </template>
@@ -46,41 +46,3 @@ defineExpose({
   canvasRef,
 });
 </script>
-
-<style scoped>
-.receipt-canvas-container {
-  width: 100%;
-  padding: 1rem;
-}
-
-.canvas-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #1a202c;
-}
-
-.canvas-wrapper {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.5rem;
-  padding: 1rem;
-  display: flex;
-  justify-content: center;
-  overflow: auto;
-}
-
-.receipt-canvas {
-  border: 1px solid #cbd5e0;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  background: white;
-  max-width: 100%;
-  height: auto;
-}
-
-@media (min-width: 768px) {
-  .receipt-canvas-container {
-    padding: 1.5rem;
-  }
-}
-</style>

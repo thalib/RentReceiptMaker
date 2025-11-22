@@ -1,181 +1,240 @@
 <template>
-  <div class="receipt-form">
-    <h2 class="form-title">Rent Receipt Generator</h2>
+  <div class="w-full max-w-4xl mx-auto px-4 py-6 md:py-8">
+    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">Rent Receipt Generator</h2>
     
     <!-- Auto-generated Receipt Number -->
-    <div class="receipt-number" v-if="receiptNumber">
-      <label>Receipt Number:</label>
-      <span class="number">{{ receiptNumber }}</span>
+    <div v-if="receiptNumber" class="bg-gray-100 border border-gray-300 rounded-lg p-3 mb-6 flex justify-between items-center">
+      <label class="font-medium text-gray-700">Receipt Number:</label>
+      <span class="font-semibold text-gray-900 font-mono">{{ receiptNumber }}</span>
     </div>
 
-    <form @submit.prevent="handleGenerate">
-      <!-- Tenant Information -->
-      <section class="form-section">
-        <h3 class="section-title">Tenant Information</h3>
+    <form @submit.prevent="handleGenerate" class="space-y-6">
+      <!-- Owner (Landlord) Section -->
+      <section class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-gray-200">Owner Information</h3>
         
-        <div class="form-field">
-          <label for="tenantName">Tenant Name <span class="required">*</span></label>
-          <input
-            id="tenantName"
-            v-model="formData.tenantName"
-            type="text"
-            placeholder="Enter tenant name"
-            required
-            aria-required="true"
-          />
+        <div class="space-y-4">
+          <div class="relative">
+            <label for="landlordName" class="block font-medium text-gray-700 mb-1">
+              Owner Name <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="landlordName"
+                v-model="formData.landlordName"
+                type="text"
+                placeholder="Enter owner name"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <span v-if="formData.landlordName.trim()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+          </div>
+
+          <div class="relative">
+            <label for="landlordPAN" class="block font-medium text-gray-700 mb-1">
+              Owner PAN Number <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="landlordPAN"
+                v-model="formData.landlordPAN"
+                type="text"
+                placeholder="AAAAA9999A"
+                maxlength="10"
+                pattern="[A-Z]{5}[0-9]{4}[A-Z]"
+                required
+                aria-required="true"
+                aria-describedby="pan-help"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all uppercase"
+              />
+              <span v-if="formData.landlordPAN.length === 10" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+            <small id="pan-help" class="block mt-1 text-sm text-gray-600">
+              Format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)
+            </small>
+          </div>
+
+          <div class="relative">
+            <label for="landlordAddress" class="block font-medium text-gray-700 mb-1">
+              Owner Address <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <textarea
+                id="landlordAddress"
+                v-model="formData.landlordAddress"
+                rows="3"
+                placeholder="Enter complete address"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              ></textarea>
+              <span v-if="formData.landlordAddress.trim()" class="absolute right-3 top-3 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- Landlord Information -->
-      <section class="form-section">
-        <h3 class="section-title">Landlord Information</h3>
+      <!-- Tenant Section -->
+      <section class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 md:p-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-4 pb-2 border-b-2 border-gray-200">Tenant Information</h3>
         
-        <div class="form-field">
-          <label for="landlordName">Landlord Name <span class="required">*</span></label>
-          <input
-            id="landlordName"
-            v-model="formData.landlordName"
-            type="text"
-            placeholder="Enter landlord name"
-            required
-            aria-required="true"
-          />
-        </div>
+        <div class="space-y-4">
+          <div class="relative">
+            <label for="tenantName" class="block font-medium text-gray-700 mb-1">
+              Tenant Name <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="tenantName"
+                v-model="formData.tenantName"
+                type="text"
+                placeholder="Enter tenant name"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <span v-if="formData.tenantName.trim()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+          </div>
 
-        <div class="form-field">
-          <label for="landlordAddress">Landlord Address <span class="required">*</span></label>
-          <textarea
-            id="landlordAddress"
-            v-model="formData.landlordAddress"
-            rows="3"
-            placeholder="Enter complete address"
-            required
-            aria-required="true"
-          ></textarea>
-        </div>
+          <div class="relative">
+            <label for="propertyAddress" class="block font-medium text-gray-700 mb-1">
+              Property Address <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <textarea
+                id="propertyAddress"
+                v-model="formData.propertyAddress"
+                rows="3"
+                placeholder="Enter rental property address"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all resize-none"
+              ></textarea>
+              <span v-if="formData.propertyAddress.trim()" class="absolute right-3 top-3 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+          </div>
 
-        <div class="form-field">
-          <label for="landlordPAN">Landlord PAN Number <span class="required">*</span></label>
-          <input
-            id="landlordPAN"
-            v-model="formData.landlordPAN"
-            type="text"
-            placeholder="AAAAA9999A"
-            maxlength="10"
-            pattern="[A-Z]{5}[0-9]{4}[A-Z]"
-            required
-            aria-required="true"
-            aria-describedby="pan-help"
-          />
-          <small id="pan-help" class="help-text">
-            Format: 5 letters, 4 digits, 1 letter (e.g., ABCDE1234F)
-          </small>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="relative">
+              <label for="rentalPeriodStart" class="block font-medium text-gray-700 mb-1">
+                Period Start <span class="text-red-600">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="rentalPeriodStart"
+                  v-model="formData.rentalPeriodStart"
+                  type="date"
+                  required
+                  aria-required="true"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <span v-if="formData.rentalPeriodStart" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+              </div>
+            </div>
+
+            <div class="relative">
+              <label for="rentalPeriodEnd" class="block font-medium text-gray-700 mb-1">
+                Period End <span class="text-red-600">*</span>
+              </label>
+              <div class="relative">
+                <input
+                  id="rentalPeriodEnd"
+                  v-model="formData.rentalPeriodEnd"
+                  type="date"
+                  required
+                  aria-required="true"
+                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                />
+                <span v-if="formData.rentalPeriodEnd" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <label for="paymentDate" class="block font-medium text-gray-700 mb-1">
+              Payment Date <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="paymentDate"
+                v-model="formData.paymentDate"
+                type="date"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <span v-if="formData.paymentDate" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+          </div>
+
+          <div class="relative">
+            <label for="rentAmount" class="block font-medium text-gray-700 mb-1">
+              Rent Amount (₹) <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <input
+                id="rentAmount"
+                v-model.number="formData.rentAmount"
+                type="number"
+                min="1"
+                step="0.01"
+                placeholder="Enter rent amount"
+                required
+                aria-required="true"
+                aria-describedby="rent-help"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+              />
+              <span v-if="formData.rentAmount && formData.rentAmount > 0" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl" aria-label="Saved">✓</span>
+            </div>
+            <small id="rent-help" class="block mt-1 text-sm text-amber-600 font-medium" v-if="showRevenueStampNotice">
+              ⚠️ Revenue stamp required for rent above ₹5,000/month
+            </small>
+          </div>
+
+          <div class="relative">
+            <label for="paymentMode" class="block font-medium text-gray-700 mb-1">
+              Payment Mode <span class="text-red-600">*</span>
+            </label>
+            <div class="relative">
+              <select
+                id="paymentMode"
+                v-model="formData.paymentMode"
+                required
+                aria-required="true"
+                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all appearance-none bg-white"
+              >
+                <option v-for="mode in PAYMENT_MODES" :key="mode" :value="mode">
+                  {{ mode }}
+                </option>
+              </select>
+              <span v-if="formData.paymentMode" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-600 text-xl pointer-events-none" aria-label="Saved">✓</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- Property Information -->
-      <section class="form-section">
-        <h3 class="section-title">Property Information</h3>
-        
-        <div class="form-field">
-          <label for="propertyAddress">Property Address <span class="required">*</span></label>
-          <textarea
-            id="propertyAddress"
-            v-model="formData.propertyAddress"
-            rows="3"
-            placeholder="Enter rental property address"
-            required
-            aria-required="true"
-          ></textarea>
-        </div>
-      </section>
-
-      <!-- Payment Information -->
-      <section class="form-section">
-        <h3 class="section-title">Payment Information</h3>
-        
-        <div class="form-field">
-          <label for="rentAmount">Rent Amount (₹) <span class="required">*</span></label>
-          <input
-            id="rentAmount"
-            v-model.number="formData.rentAmount"
-            type="number"
-            min="1"
-            step="0.01"
-            placeholder="Enter rent amount"
-            required
-            aria-required="true"
-            aria-describedby="rent-help"
-          />
-          <small id="rent-help" class="help-text" v-if="showRevenueStampNotice">
-            ⚠️ Revenue stamp required for rent above ₹5,000/month
-          </small>
-        </div>
-
-        <div class="form-field">
-          <label for="rentalPeriodStart">Rental Period Start <span class="required">*</span></label>
-          <input
-            id="rentalPeriodStart"
-            v-model="formData.rentalPeriodStart"
-            type="date"
-            required
-            aria-required="true"
-          />
-        </div>
-
-        <div class="form-field">
-          <label for="rentalPeriodEnd">Rental Period End <span class="required">*</span></label>
-          <input
-            id="rentalPeriodEnd"
-            v-model="formData.rentalPeriodEnd"
-            type="date"
-            required
-            aria-required="true"
-          />
-        </div>
-
-        <div class="form-field">
-          <label for="paymentDate">Payment Date <span class="required">*</span></label>
-          <input
-            id="paymentDate"
-            v-model="formData.paymentDate"
-            type="date"
-            required
-            aria-required="true"
-          />
-        </div>
-
-        <div class="form-field">
-          <label for="paymentMode">Payment Mode <span class="required">*</span></label>
-          <select
-            id="paymentMode"
-            v-model="formData.paymentMode"
-            required
-            aria-required="true"
-          >
-            <option v-for="mode in PAYMENT_MODES" :key="mode" :value="mode">
-              {{ mode }}
-            </option>
-          </select>
-        </div>
-      </section>
-
-      <!-- Form Actions -->
-      <div class="form-actions">
+      <!-- Preview Button and Actions -->
+      <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
         <button
+          v-if="!hasGenerated"
+          type="submit"
+          :disabled="!isFormValid"
+          class="w-full sm:w-auto px-8 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:hover:shadow-md transform hover:-translate-y-0.5 disabled:hover:translate-y-0"
+        >
+          Preview Receipt
+        </button>
+        
+        <button
+          v-if="hasGenerated"
           type="button"
-          class="btn btn-secondary"
           @click="handleClear"
           :disabled="!hasData"
+          class="w-full sm:w-auto px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
         >
-          Clear Form
-        </button>
-        <button
-          type="submit"
-          class="btn btn-primary"
-          :disabled="!isFormValid"
-        >
-          Generate Receipt
+          New Receipt
         </button>
       </div>
     </form>
@@ -190,8 +249,13 @@ import { useLocalStorage } from '../composables/useLocalStorage';
 import { PAYMENT_MODES, REVENUE_STAMP_THRESHOLD } from '../utils/constants';
 import { isValidPAN } from '../utils/validation';
 
+defineProps<{
+  hasGenerated: boolean;
+}>();
+
 const emit = defineEmits<{
   generate: [];
+  clear: [];
 }>();
 
 const receiptStore = useReceiptStore();
@@ -232,8 +296,9 @@ onMounted(() => {
 
 // Handle clear form
 function handleClear() {
-  if (confirm('Are you sure you want to clear the form? All unsaved data will be lost.')) {
+  if (confirm('Are you sure you want to start a new receipt? Current data will be cleared.')) {
     receiptStore.clearForm();
+    emit('clear');
   }
 }
 
@@ -244,146 +309,3 @@ function handleGenerate() {
   }
 }
 </script>
-
-<style scoped>
-.receipt-form {
-  width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 1rem;
-}
-
-.form-title {
-  font-size: 1.5rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  color: #1a202c;
-}
-
-.receipt-number {
-  background: #f7fafc;
-  border: 1px solid #e2e8f0;
-  border-radius: 0.375rem;
-  padding: 0.75rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.receipt-number label {
-  font-weight: 500;
-  color: #4a5568;
-}
-
-.receipt-number .number {
-  font-weight: 600;
-  color: #2d3748;
-  font-family: monospace;
-}
-
-.form-section {
-  margin-bottom: 1.5rem;
-}
-
-.section-title {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-bottom: 0.75rem;
-  color: #2d3748;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 0.5rem;
-}
-
-.form-field {
-  margin-bottom: 1rem;
-}
-
-.form-field label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 0.25rem;
-  color: #4a5568;
-}
-
-.required {
-  color: #e53e3e;
-}
-
-.form-field input,
-.form-field textarea,
-.form-field select {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #cbd5e0;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  transition: border-color 0.2s;
-}
-
-.form-field input:focus,
-.form-field textarea:focus,
-.form-field select:focus {
-  outline: none;
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
-}
-
-.form-field input:invalid,
-.form-field textarea:invalid {
-  border-color: #fc8181;
-}
-
-.help-text {
-  display: block;
-  margin-top: 0.25rem;
-  font-size: 0.875rem;
-  color: #718096;
-}
-
-.form-actions {
-  display: flex;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.btn {
-  flex: 1;
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: #4299e1;
-  color: white;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #3182ce;
-}
-
-.btn-secondary {
-  background: #e2e8f0;
-  color: #2d3748;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #cbd5e0;
-}
-
-@media (min-width: 768px) {
-  .receipt-form {
-    padding: 1.5rem;
-  }
-}
-</style>

@@ -162,15 +162,24 @@ export function useReceiptCanvas() {
     // Draw white background
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#000000';
+
+    // Draw colorful header background
+    const gradient = ctx.createLinearGradient(0, 0, canvas.width, padding * 2);
+    gradient.addColorStop(0, '#667eea');
+    gradient.addColorStop(1, '#764ba2');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, padding * 2);
 
     // Title: RENT RECEIPT
+    ctx.fillStyle = '#FFFFFF';
     drawText(ctx, 'RENT RECEIPT', canvas.width / 2, currentY, {
       fontSize: fontSize.title,
       fontWeight: 'bold',
       align: 'center',
     });
     currentY += fontSize.title * 2;
+    
+    ctx.fillStyle = '#000000';
 
     // Receipt Number (right-aligned)
     drawText(ctx, `Receipt No: ${receiptNumber}`, canvas.width - padding, currentY, {
@@ -352,6 +361,45 @@ export function useReceiptCanvas() {
         align: 'left',
       });
     }
+
+    // Draw "PAID" stamp (rotated, red, prominent)
+    ctx.save();
+    const stampX = canvas.width - 250;
+    const stampY = canvas.height / 2 - 100;
+    
+    // Rotate canvas for stamp
+    ctx.translate(stampX, stampY);
+    ctx.rotate(-0.3); // Rotate ~17 degrees
+    
+    // Draw stamp border (red rounded rectangle)
+    ctx.strokeStyle = '#DC2626';
+    ctx.lineWidth = 8;
+    ctx.setLineDash([]);
+    const stampWidth = 240;
+    const stampHeight = 100;
+    const cornerRadius = 10;
+    
+    ctx.beginPath();
+    ctx.moveTo(-stampWidth/2 + cornerRadius, -stampHeight/2);
+    ctx.lineTo(stampWidth/2 - cornerRadius, -stampHeight/2);
+    ctx.arcTo(stampWidth/2, -stampHeight/2, stampWidth/2, -stampHeight/2 + cornerRadius, cornerRadius);
+    ctx.lineTo(stampWidth/2, stampHeight/2 - cornerRadius);
+    ctx.arcTo(stampWidth/2, stampHeight/2, stampWidth/2 - cornerRadius, stampHeight/2, cornerRadius);
+    ctx.lineTo(-stampWidth/2 + cornerRadius, stampHeight/2);
+    ctx.arcTo(-stampWidth/2, stampHeight/2, -stampWidth/2, stampHeight/2 - cornerRadius, cornerRadius);
+    ctx.lineTo(-stampWidth/2, -stampHeight/2 + cornerRadius);
+    ctx.arcTo(-stampWidth/2, -stampHeight/2, -stampWidth/2 + cornerRadius, -stampHeight/2, cornerRadius);
+    ctx.closePath();
+    ctx.stroke();
+    
+    // Draw "PAID" text
+    ctx.fillStyle = '#DC2626';
+    ctx.font = 'bold 56px Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('PAID', 0, 0);
+    
+    ctx.restore();
   }
 
   return {
