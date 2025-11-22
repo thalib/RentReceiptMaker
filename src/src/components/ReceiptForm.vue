@@ -183,13 +183,12 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted } from 'vue';
+import { computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useReceiptStore } from '../stores/receiptStore';
-import { useDatabase } from '../composables/useDatabase';
+import { useLocalStorage } from '../composables/useLocalStorage';
 import { PAYMENT_MODES, REVENUE_STAMP_THRESHOLD } from '../utils/constants';
 import { isValidPAN } from '../utils/validation';
-import { useDebounceFn } from '@vueuse/core';
 
 const emit = defineEmits<{
   generate: [];
@@ -197,7 +196,7 @@ const emit = defineEmits<{
 
 const receiptStore = useReceiptStore();
 const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
-const { saveDraft, loadDraft, generateReceiptNumber } = useDatabase();
+const storage = useLocalStorage();
 
 // Computed properties
 const showRevenueStampNotice = computed(() => {
@@ -219,55 +218,15 @@ const isFormValid = computed(() => {
   );
 });
 
-// Auto-save draft with debounce
-const debouncedSave = useDebounceFn(async () => {
-  if (hasData.value) {
-    try {
-      await saveDraft({
-        tenantName: formData.value.tenantName,
-        landlordName: formData.value.landlordName,
-        landlordAddress: formData.value.landlordAddress,
-        landlordPAN: formData.value.landlordPAN,
-        rentAmount: formData.value.rentAmount || 0,
-        rentalPeriodStart: formData.value.rentalPeriodStart ? new Date(formData.value.rentalPeriodStart) : new Date(),
-        rentalPeriodEnd: formData.value.rentalPeriodEnd ? new Date(formData.value.rentalPeriodEnd) : new Date(),
-        paymentDate: formData.value.paymentDate ? new Date(formData.value.paymentDate) : new Date(),
-        propertyAddress: formData.value.propertyAddress,
-        paymentMode: formData.value.paymentMode,
-      });
-    } catch (error) {
-      console.error('Failed to save draft:', error);
-    }
-  }
-}, 500);
-
-// Watch form data for auto-save
-watch(formData, debouncedSave, { deep: true });
-
-// Load draft on mount
-onMounted(async () => {
+// Load draft on mount and generate receipt number
+onMounted(() => {
   try {
-    const draft = await loadDraft();
-    if (draft) {
-      receiptStore.setFormData({
-        tenantName: draft.tenantName,
-        landlordName: draft.landlordName,
-        landlordAddress: draft.landlordAddress,
-        landlordPAN: draft.landlordPAN,
-        rentAmount: draft.rentAmount,
-        rentalPeriodStart: draft.rentalPeriodStart ? new Date(draft.rentalPeriodStart).toISOString().split('T')[0] : '',
-        rentalPeriodEnd: draft.rentalPeriodEnd ? new Date(draft.rentalPeriodEnd).toISOString().split('T')[0] : '',
-        paymentDate: draft.paymentDate ? new Date(draft.paymentDate).toISOString().split('T')[0] : '',
-        propertyAddress: draft.propertyAddress,
-        paymentMode: draft.paymentMode,
-      });
-    }
-
-    // Generate receipt number
-    const number = await generateReceiptNumber();
+    // Draft is already loaded by receiptStore initialization
+    // Just generate receipt number
+    const number = storage.generateReceiptNumber();
     receiptStore.setReceiptNumber(number);
   } catch (error) {
-    console.error('Failed to load draft:', error);
+    console.error('Failed to initialize form:', error);
   }
 });
 

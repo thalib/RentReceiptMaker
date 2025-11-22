@@ -8,10 +8,10 @@ Generate rent receipts instantly, for free, right in your browser. This app is o
 
 - **Real-time Preview:** See your rent receipt update live as you fill out the form.
 - **Offline First:** Works even without an internet connection after the first load.
-- **Privacy Focused:** No data is sent anywhere; everything stays on your device.
+- **Privacy Focused:** No data is sent anywhere; everything stays on your device using localStorage.
 - **PNG Export:** Download your rent receipt as a high-quality PNG image.
 - **Responsive Design:** Looks great and works smoothly on any device, especially mobile.
-- **Auto-Save:** Your progress is saved automatically so you never lose your work.
+- **Auto-Save:** Your progress is saved automatically to localStorage so you never lose your work.
 
 ## Installation and Running the App
 

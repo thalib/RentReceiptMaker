@@ -47,15 +47,15 @@ A real-time preview of the rent receipt will be displayed on an HTML5 canvas as 
 ### 3.3. Actions & Data Storage
 
 - **Download**: Users can download the generated receipt as a high-quality PNG image.
-- **Local Storage**: All form data and generated receipts will be stored locally using RxDB, an offline-first database.
-    - A `current_draft` record will persist the form's state.
+- **Local Storage**: All form data and generated receipts will be stored locally using browser localStorage.
+    - A `current_draft` entry will persist the form's state for auto-save functionality.
     - A `receipts` collection will store saved receipts for future access (History feature is post-MVP).
 
 ## 4. Application Architecture
 
 - **Framework**: Vue 3
-- **State Management**: Vue's built-in reactivity for form state.
-- **Local Database**: RxDB for robust offline data persistence in IndexedDB.
+- **State Management**: Pinia for global state management with localStorage integration.
+- **Local Storage**: Browser localStorage for simple, synchronous data persistence.
 - **Structure**: All source code will reside within the `src/` directory.
 
 ## 5. Layout & Responsiveness

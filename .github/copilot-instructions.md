@@ -4,7 +4,7 @@
 Develop and maintain a simple, offline-first, privacy-focused Rent Receipt Generator. All requirements are in `SPEC.md`—always check this before implementing changes.
 
 ## 2. Architecture & Structure
-- **SPA, Client-Side Only:** No backend. All logic, rendering, and data storage (RxDB) is in-browser.
+- **SPA, Client-Side Only:** No backend. All logic, rendering, and data storage (localStorage) is in-browser.
 - **Offline-First:** All features must work without internet after initial load.
 - **Mobile-First:** Design for mobile screens first, then scale up responsively.
 - **Directory Structure:** All code is in `src/`:
@@ -12,14 +12,13 @@ Develop and maintain a simple, offline-first, privacy-focused Rent Receipt Gener
   - `components/` (Vue components)
   - `composables/` (reusable logic)
   - `stores/` (Pinia)
-  - `database/` (RxDB schemas)
   - `utils/` (helpers, constants, error handling)
   - `types/` (TypeScript types)
 
 ## 3. Technical Stack
 - **Vue 3** (`<script setup>`, Composition API)
 - **Pinia** (state management)
-- **RxDB** (IndexedDB persistence)
+- **LocalStorage** (browser native storage for persistence)
 - **Vite** (build tool)
 - **TypeScript** (strict mode recommended)
 - **Tailwind CSS** (utility-first styling)
@@ -47,9 +46,9 @@ Develop and maintain a simple, offline-first, privacy-focused Rent Receipt Gener
 
 ## 6. Testing
 - **Unit tests:** All utilities, composables, components, and stores must be tested.
-- **Integration tests:** Cover form-to-canvas, form-to-database, and receipt generation flows.
+- **Integration tests:** Cover form-to-canvas, form-to-localStorage, and receipt generation flows.
 - **Accessibility tests:** Required for all major flows.
-- **Mock utilities:** Use for RxDB and browser APIs.
+- **Mock utilities:** Use for localStorage and browser APIs.
 
 ## 7. Task & PRD Workflow
 - Always verify changes against `SPEC.md` and run all tests before submitting.

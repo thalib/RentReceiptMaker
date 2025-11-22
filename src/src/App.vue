@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import AppHeader from './components/AppHeader.vue';
+import AppFooter from './components/AppFooter.vue';
 import ReceiptForm from './components/ReceiptForm.vue';
 import ReceiptCanvas from './components/ReceiptCanvas.vue';
 import ActionButtons from './components/ActionButtons.vue';
@@ -112,6 +113,8 @@ function handleClear() {
       @download="handleDownload"
       @generate="handleGenerate"
     />
+
+    <AppFooter />
   </div>
 </template>
 

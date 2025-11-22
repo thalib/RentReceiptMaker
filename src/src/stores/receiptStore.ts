@@ -1,13 +1,17 @@
 /**
  * Pinia store for receipt form state
+ * Now uses localStorage for persistence instead of RxDB
  */
 
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 import type { FormData } from '../types/receipt';
 import type { PaymentMode } from '../utils/constants';
+import { useLocalStorage } from '../composables/useLocalStorage';
 
 export const useReceiptStore = defineStore('receipt', () => {
+  const storage = useLocalStorage();
+
   // Form state
   const formData = ref<FormData>({
     tenantName: '',
@@ -28,6 +32,47 @@ export const useReceiptStore = defineStore('receipt', () => {
 
   // Receipt number (will be generated when saving)
   const receiptNumber = ref<string>('');
+
+  // Load draft on initialization
+  const loadDraft = () => {
+    const draft = storage.loadDraft();
+    if (draft) {
+      formData.value = {
+        tenantName: draft.tenantName,
+        landlordName: draft.landlordName,
+        landlordAddress: draft.landlordAddress,
+        landlordPAN: draft.landlordPAN,
+        rentAmount: draft.rentAmount,
+        rentalPeriodStart: draft.rentalPeriodStart,
+        rentalPeriodEnd: draft.rentalPeriodEnd,
+        paymentDate: draft.paymentDate,
+        propertyAddress: draft.propertyAddress,
+        paymentMode: draft.paymentMode as PaymentMode,
+      };
+    }
+  };
+
+  // Auto-save draft when form data changes
+  watch(
+    formData,
+    (newData) => {
+      if (hasData.value) {
+        storage.saveDraft({
+          tenantName: newData.tenantName,
+          landlordName: newData.landlordName,
+          landlordAddress: newData.landlordAddress,
+          landlordPAN: newData.landlordPAN,
+          rentAmount: newData.rentAmount || 0,
+          rentalPeriodStart: newData.rentalPeriodStart,
+          rentalPeriodEnd: newData.rentalPeriodEnd,
+          paymentDate: newData.paymentDate,
+          propertyAddress: newData.propertyAddress,
+          paymentMode: newData.paymentMode,
+        });
+      }
+    },
+    { deep: true }
+  );
 
   // Computed: Check if form has any data
   const hasData = computed(() => {
@@ -71,6 +116,7 @@ export const useReceiptStore = defineStore('receipt', () => {
     };
     errors.value = {};
     isValid.value = false;
+    storage.clearDraft();
   }
 
   function setValidation(valid: boolean, fieldErrors: Record<string, string> = {}) {
@@ -81,6 +127,9 @@ export const useReceiptStore = defineStore('receipt', () => {
   function setReceiptNumber(number: string) {
     receiptNumber.value = number;
   }
+
+  // Initialize by loading draft
+  loadDraft();
 
   return {
     // State
@@ -96,5 +145,6 @@ export const useReceiptStore = defineStore('receipt', () => {
     clearForm,
     setValidation,
     setReceiptNumber,
+    loadDraft,
   };
 });

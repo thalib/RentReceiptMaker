@@ -2,12 +2,12 @@
  * Composable for receipt generation workflow
  */
 
-import { useDatabase } from './useDatabase';
+import { useLocalStorage } from './useLocalStorage';
 import { useCanvasExport } from './useCanvasExport';
 import type { FormData } from '../types/receipt';
 
 export function useReceiptGeneration() {
-  const { saveReceipt, clearDraft } = useDatabase();
+  const storage = useLocalStorage();
   const { exportAndDownload, canvasToDataURL } = useCanvasExport();
 
   /**
@@ -43,24 +43,19 @@ export function useReceiptGeneration() {
         throw new Error('Form validation failed');
       }
 
-      // Convert dates to Date objects
-      const rentalPeriodStart = new Date(formData.rentalPeriodStart);
-      const rentalPeriodEnd = new Date(formData.rentalPeriodEnd);
-      const paymentDate = new Date(formData.paymentDate);
-
       // Generate data URL for storage (optional)
       const imageDataUrl = canvasToDataURL(canvasElement);
 
-      // Save receipt to database
-      const savedReceipt = await saveReceipt({
+      // Save receipt to localStorage
+      const savedReceipt = storage.saveReceipt({
         tenantName: formData.tenantName,
         landlordName: formData.landlordName,
         landlordAddress: formData.landlordAddress,
         landlordPAN: formData.landlordPAN,
         rentAmount: formData.rentAmount!,
-        rentalPeriodStart,
-        rentalPeriodEnd,
-        paymentDate,
+        rentalPeriodStart: formData.rentalPeriodStart,
+        rentalPeriodEnd: formData.rentalPeriodEnd,
+        paymentDate: formData.paymentDate,
         propertyAddress: formData.propertyAddress,
         paymentMode: formData.paymentMode,
         imageDataUrl,
@@ -72,7 +67,7 @@ export function useReceiptGeneration() {
       }
 
       // Clear draft after successful generation
-      await clearDraft();
+      storage.clearDraft();
 
       return true;
     } catch (error) {
