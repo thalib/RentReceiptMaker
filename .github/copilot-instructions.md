@@ -21,7 +21,7 @@ Develop and maintain a simple, offline-first, privacy-focused Rent Receipt Gener
 - **LocalStorage** (browser native storage for persistence)
 - **Vite** (build tool)
 - **TypeScript** (strict mode recommended)
-- **Tailwind CSS** (utility-first styling)
+- **Bootstrap 5.3** (responsive UI framework)
 - **VeeValidate** (form validation)
 - **Vitest** (unit/integration tests)
 

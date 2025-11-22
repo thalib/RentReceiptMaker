@@ -56,6 +56,7 @@ A real-time preview of the rent receipt will be displayed on an HTML5 canvas as 
 - **Framework**: Vue 3
 - **State Management**: Pinia for global state management with localStorage integration.
 - **Local Storage**: Browser localStorage for simple, synchronous data persistence.
+- **Styling**: Bootstrap 5.3 for responsive UI components and layouts.
 - **Structure**: All source code will reside within the `src/` directory.
 
 ## 5. Layout & Responsiveness

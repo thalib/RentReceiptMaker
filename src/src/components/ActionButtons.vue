@@ -1,10 +1,10 @@
 <template>
-  <div class="w-full max-w-4xl mx-auto px-4 py-6 flex flex-col sm:flex-row gap-3 justify-center items-center">
+  <div class="w-100 container px-3 py-4 d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center" style="max-width: 56rem;">
     <button
       type="button"
       @click="handleDownload"
       :disabled="!canDownload || isDownloading"
-      class="w-full sm:w-auto px-8 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:hover:shadow-md transform hover:-translate-y-0.5 disabled:hover:translate-y-0"
+      class="btn btn-success btn-lg w-100 w-sm-auto px-4 py-2 fw-semibold shadow btn-hover-lift"
     >
       {{ isDownloading ? 'Downloading...' : '📥 Download PNG' }}
     </button>
@@ -12,7 +12,7 @@
       type="button"
       @click="handleCopy"
       :disabled="!canDownload"
-      class="w-full sm:w-auto px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md hover:shadow-lg disabled:hover:shadow-md transform hover:-translate-y-0.5 disabled:hover:translate-y-0"
+      class="btn btn-primary btn-lg w-100 w-sm-auto px-4 py-2 fw-semibold shadow btn-hover-lift"
     >
       📋 Copy Image
     </button>
@@ -48,3 +48,21 @@ function handleCopy() {
   emit('copy');
 }
 </script>
+
+<style scoped>
+.btn-hover-lift:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.btn-hover-lift:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (min-width: 576px) {
+  .w-sm-auto {
+    width: auto !important;
+  }
+}
+</style>

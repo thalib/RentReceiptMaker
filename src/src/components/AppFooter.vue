@@ -1,25 +1,25 @@
 <template>
-  <footer class="w-full bg-gray-800 text-gray-200 py-6 px-4 md:py-8 md:px-6 mt-auto">
-    <div class="max-w-7xl mx-auto text-center">
-      <p class="text-sm md:text-base opacity-90 mb-4">
+  <footer class="w-100 bg-dark text-light py-4 px-3 py-md-5 px-md-4 mt-auto">
+    <div class="container text-center">
+      <p class="fs-6 fs-md-5 opacity-75 mb-4">
         All data stays on your device. No server. No tracking. Open Source.
       </p>
-      <div class="flex justify-center gap-3 md:gap-4 flex-wrap mb-4">
-        <span class="inline-flex items-center gap-1 text-sm md:text-base font-medium px-3 py-1 md:px-4 md:py-1.5 bg-white/10 rounded-md">🔒 Private</span>
-        <span class="inline-flex items-center gap-1 text-sm md:text-base font-medium px-3 py-1 md:px-4 md:py-1.5 bg-white/10 rounded-md">📱 Offline</span>
-        <span class="inline-flex items-center gap-1 text-sm md:text-base font-medium px-3 py-1 md:px-4 md:py-1.5 bg-white/10 rounded-md">🆓 Free</span>
+      <div class="d-flex justify-content-center gap-3 gap-md-4 flex-wrap mb-4">
+        <span class="d-inline-flex align-items-center gap-1 fs-6 fw-medium px-3 py-1 px-md-4 py-md-2 badge-custom">🔒 Private</span>
+        <span class="d-inline-flex align-items-center gap-1 fs-6 fw-medium px-3 py-1 px-md-4 py-md-2 badge-custom">📱 Offline</span>
+        <span class="d-inline-flex align-items-center gap-1 fs-6 fw-medium px-3 py-1 px-md-4 py-md-2 badge-custom">🆓 Free</span>
       </div>
-      <p class="text-sm md:text-base mb-3">
-        <a href="https://github.com/thalib/RentReceiptMaker" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">
+      <p class="fs-6 fs-md-5 mb-3">
+        <a href="https://github.com/thalib/RentReceiptMaker" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-none link-custom">
           GitHub
         </a>
         <span class="mx-2 opacity-50">•</span>
-        <a href="https://github.com/thalib/RentReceiptMaker/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">
+        <a href="https://github.com/thalib/RentReceiptMaker/blob/main/LICENSE" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-none link-custom">
           License
         </a>
       </p>
-      <p class="text-sm">
-        Built with ❤️ by <a href="https://devnodes.in" target="_blank" rel="noopener noreferrer" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors">Devnodes.in</a>
+      <p class="fs-6">
+        Built with ❤️ by <a href="https://devnodes.in" target="_blank" rel="noopener noreferrer" class="text-info text-decoration-none link-custom">Devnodes.in</a>
       </p>
     </div>
   </footer>
@@ -28,3 +28,15 @@
 <script setup lang="ts">
 // No logic needed for now
 </script>
+
+<style scoped>
+.badge-custom {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem;
+}
+
+.link-custom:hover {
+  text-decoration: underline !important;
+  color: #9ec5fe !important;
+}
+</style>

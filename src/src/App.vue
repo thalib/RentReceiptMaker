@@ -112,19 +112,19 @@ async function handleCopy() {
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col">
+  <div class="min-vh-100 d-flex flex-column">
     <ToastContainer />
     <AppHeader />
     
-    <main class="flex-1 w-full">
-      <div class="w-full flex flex-col">
+    <main class="flex-grow-1 w-100">
+      <div class="w-100 d-flex flex-column">
         <ReceiptForm 
           @generate="handleGenerate"
           @clear="handleClear"
           :has-generated="hasGenerated"
         />
         
-        <div v-if="hasGenerated" class="w-full">
+        <div v-if="hasGenerated" class="w-100">
           <ReceiptCanvas ref="canvasComponent" />
           
           <ActionButtons

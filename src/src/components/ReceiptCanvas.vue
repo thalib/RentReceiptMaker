@@ -1,8 +1,8 @@
 <template>
-  <div class="w-full max-w-4xl mx-auto px-4 py-6 receipt-canvas-container">
-    <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-6 text-center">Receipt Preview</h2>
-    <div class="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-xl p-4 md:p-6 flex justify-center overflow-auto shadow-lg">
-      <canvas ref="canvasRef" class="border-2 border-gray-300 shadow-xl bg-white max-w-full h-auto rounded-lg"></canvas>
+  <div class="w-100 container px-3 py-4 receipt-canvas-container" style="max-width: 56rem;">
+    <h2 class="display-6 display-md-5 fw-bold text-dark mb-4 text-center">Receipt Preview</h2>
+    <div class="canvas-wrapper border border-2 rounded-3 p-3 p-md-4 d-flex justify-content-center overflow-auto shadow-lg">
+      <canvas ref="canvasRef" class="border border-2 border-secondary shadow bg-white mw-100 h-auto rounded"></canvas>
     </div>
   </div>
 </template>
@@ -46,3 +46,10 @@ defineExpose({
   canvasRef,
 });
 </script>
+
+<style scoped>
+.canvas-wrapper {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-color: #dee2e6 !important;
+}
+</style>

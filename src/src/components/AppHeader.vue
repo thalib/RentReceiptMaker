@@ -1,8 +1,8 @@
 <template>
-  <header class="w-full bg-gradient-to-br from-indigo-600 to-purple-700 text-white py-6 px-4 md:py-8 md:px-6 shadow-md">
-    <div class="max-w-7xl mx-auto text-center">
-      <h1 class="text-3xl md:text-4xl font-bold mb-2">Free Rent Receipt Maker</h1>
-      <p class="text-sm md:text-base opacity-90 font-light">Free • Offline • Private</p>
+  <header class="w-100 bg-gradient text-white py-4 px-3 py-md-5 px-md-4 shadow">
+    <div class="container text-center">
+      <h1 class="display-4 display-md-3 fw-bold mb-2">Free Rent Receipt Maker</h1>
+      <p class="fs-6 fs-md-5 opacity-75 fw-light">Free • Offline • Private</p>
     </div>
   </header>
 </template>
@@ -10,3 +10,9 @@
 <script setup lang="ts">
 // No logic needed for now
 </script>
+
+<style scoped>
+.bg-gradient {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+}
+</style>
