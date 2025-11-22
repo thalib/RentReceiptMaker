@@ -1,13 +1,13 @@
 <template>
   <footer class="app-footer">
     <div class="footer-content">
+      <p class="footer-info mb-2">
+        All data stays on your device. No server. No tracking. Open Source.
+      </p>
       <p class="footer-text">
         <span class="feature-badge">🔒 Private</span>
         <span class="feature-badge">📱 Offline</span>
         <span class="feature-badge">🆓 Free</span>
-      </p>
-      <p class="footer-info">
-        All data stays on your device. No server. No tracking. Open Source.
       </p>
       <p class="footer-links">
         <a href="https://github.com/thalib/RentReceiptMaker" target="_blank" rel="noopener noreferrer">
@@ -17,6 +17,9 @@
         <a href="https://github.com/thalib/RentReceiptMaker/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">
           License
         </a>
+      </p>
+      <p class="footer-attribution">
+        Built with ❤️ by <a href="https://devnodes.in" target="_blank" rel="noopener noreferrer">Devnodes.in</a>
       </p>
     </div>
   </footer>

@@ -1,7 +1,7 @@
 <template>
   <header class="app-header">
     <div class="header-content">
-      <h1 class="app-title">Rent Receipt Generator</h1>
+      <h1 class="app-title">Free Rent Receipt Maker</h1>
       <p class="app-tagline">Free • Offline • Private</p>
     </div>
   </header>
