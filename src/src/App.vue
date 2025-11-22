@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { storeToRefs } from 'pinia';
-import AppHeader from './components/AppHeader.vue';
-import AppFooter from './components/AppFooter.vue';
-import ReceiptForm from './components/ReceiptForm.vue';
-import ReceiptCanvas from './components/ReceiptCanvas.vue';
-import ActionButtons from './components/ActionButtons.vue';
-import ToastContainer from './components/ToastContainer.vue';
-import { useReceiptStore } from './stores/receiptStore';
-import { useReceiptGeneration } from './composables/useReceiptGeneration';
-import { useToast } from './composables/useToast';
+import { ref, computed } from 'vue'
+import { storeToRefs } from 'pinia'
+import AppHeader from './components/AppHeader.vue'
+import AppFooter from './components/AppFooter.vue'
+import ReceiptForm from './components/ReceiptForm.vue'
+import ReceiptCanvas from './components/ReceiptCanvas.vue'
+import ActionButtons from './components/ActionButtons.vue'
+import ToastContainer from './components/ToastContainer.vue'
+import { useReceiptStore } from './stores/receiptStore'
+import { useReceiptGeneration } from './composables/useReceiptGeneration'
+import { useToast } from './composables/useToast'
 
-const receiptStore = useReceiptStore();
-const { formData, hasData, receiptNumber } = storeToRefs(receiptStore);
-const { generateReceipt, downloadReceiptOnly } = useReceiptGeneration();
-const toast = useToast();
+const receiptStore = useReceiptStore()
+const { formData, hasData } = storeToRefs(receiptStore)
+const { generateReceipt, downloadReceiptOnly } = useReceiptGeneration()
+const toast = useToast()
 
-const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null);
-const hasGenerated = ref(false);
+const canvasComponent = ref<InstanceType<typeof ReceiptCanvas> | null>(null)
+const hasGenerated = ref(false)
 
 // Validate form
 const isFormValid = computed(() => {
@@ -32,80 +32,80 @@ const isFormValid = computed(() => {
     formData.value.rentalPeriodStart !== '' &&
     formData.value.rentalPeriodEnd !== '' &&
     formData.value.paymentDate !== ''
-  );
-});
+  )
+})
 
 async function handleGenerate() {
   if (isFormValid.value) {
     // Set hasGenerated first so the canvas gets rendered
-    hasGenerated.value = true;
-    
+    hasGenerated.value = true
+
     // Wait for next tick to ensure canvas is rendered
-    await new Promise(resolve => setTimeout(resolve, 100));
-    
+    await new Promise((resolve) => setTimeout(resolve, 100))
+
     if (canvasComponent.value?.canvasRef) {
       const success = await generateReceipt(
         formData.value,
         canvasComponent.value.canvasRef,
-        false // Don't auto-download, let user click download button
-      );
-      
+        false, // Don't auto-download, let user click download button
+      )
+
       if (success) {
-        toast.success('Receipt generated successfully! You can now download it.');
-        
+        toast.success('Receipt generated successfully! You can now download it.')
+
         // Scroll to canvas
         setTimeout(() => {
-          document.querySelector('.receipt-canvas-container')?.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+          document
+            .querySelector('.receipt-canvas-container')
+            ?.scrollIntoView({ behavior: 'smooth' })
+        }, 100)
       } else {
-        toast.error('Failed to generate receipt. Please check your data and try again.');
-        hasGenerated.value = false;
+        toast.error('Failed to generate receipt. Please check your data and try again.')
+        hasGenerated.value = false
       }
     } else {
-      toast.error('Canvas not ready. Please try again.');
-      hasGenerated.value = false;
+      toast.error('Canvas not ready. Please try again.')
+      hasGenerated.value = false
     }
   }
 }
 
 async function handleDownload() {
-  if (canvasComponent.value?.canvasRef && receiptNumber.value) {
-    const success = await downloadReceiptOnly(
-      canvasComponent.value.canvasRef,
-      receiptNumber.value
-    );
-    
+  if (canvasComponent.value?.canvasRef) {
+    const receiptNum = formData.value.useReceiptNumber
+      ? formData.value.receiptNumber
+      : `receipt-${Date.now()}`
+    const success = await downloadReceiptOnly(canvasComponent.value.canvasRef, receiptNum)
+
     if (success) {
-      toast.success('Receipt downloaded successfully!');
+      toast.success('Receipt downloaded successfully!')
     } else {
-      toast.error('Failed to download receipt. Please try again.');
+      toast.error('Failed to download receipt. Please try again.')
     }
   }
 }
 
 function handleClear() {
-  receiptStore.clearForm();
-  hasGenerated.value = false;
+  receiptStore.clearForm()
+  hasGenerated.value = false
 }
 
 async function handleCopy() {
   if (canvasComponent.value?.canvasRef) {
     try {
-      const canvas = canvasComponent.value.canvasRef;
+      const canvas = canvasComponent.value.canvasRef
       canvas.toBlob(async (blob) => {
         if (blob) {
           try {
-            await navigator.clipboard.write([
-              new ClipboardItem({ 'image/png': blob })
-            ]);
-            toast.success('Receipt copied to clipboard!');
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])
+            toast.success('Receipt copied to clipboard!')
           } catch {
-            toast.error('Failed to copy receipt. Your browser may not support this feature.');
+            toast.error('Failed to copy receipt. Your browser may not support this feature.')
           }
         }
-      }, 'image/png');
+      }, 'image/png')
     } catch {
-      toast.error('Failed to copy receipt. Please try again.');
+      toast.error('Failed to copy receipt. Please try again.')
     }
   }
 }
@@ -115,18 +115,18 @@ async function handleCopy() {
   <div class="min-vh-100 d-flex flex-column">
     <ToastContainer />
     <AppHeader />
-    
+
     <main class="flex-grow-1 w-100">
       <div class="w-100 d-flex flex-column">
-        <ReceiptForm 
+        <ReceiptForm
           @generate="handleGenerate"
           @clear="handleClear"
           :has-generated="hasGenerated"
         />
-        
+
         <div v-if="hasGenerated" class="w-100">
           <ReceiptCanvas ref="canvasComponent" />
-          
+
           <ActionButtons
             :has-data="hasData"
             :is-valid="isFormValid"
@@ -141,5 +141,3 @@ async function handleCopy() {
     <AppFooter />
   </div>
 </template>
-
-

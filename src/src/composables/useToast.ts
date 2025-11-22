@@ -2,17 +2,17 @@
  * Simple toast notification composable
  */
 
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 export interface Toast {
-  id: number;
-  message: string;
-  type: 'success' | 'error' | 'info' | 'warning';
-  duration: number;
+  id: number
+  message: string
+  type: 'success' | 'error' | 'info' | 'warning'
+  duration: number
 }
 
-const toasts = ref<Toast[]>([]);
-let nextId = 1;
+const toasts = ref<Toast[]>([])
+let nextId = 1
 
 export function useToast() {
   function showToast(message: string, type: Toast['type'] = 'info', duration: number = 3000) {
@@ -21,39 +21,39 @@ export function useToast() {
       message,
       type,
       duration,
-    };
+    }
 
-    toasts.value.push(toast);
+    toasts.value.push(toast)
 
     // Auto-remove after duration
     setTimeout(() => {
-      removeToast(toast.id);
-    }, duration);
+      removeToast(toast.id)
+    }, duration)
 
-    return toast.id;
+    return toast.id
   }
 
   function removeToast(id: number) {
-    const index = toasts.value.findIndex((t) => t.id === id);
+    const index = toasts.value.findIndex((t) => t.id === id)
     if (index > -1) {
-      toasts.value.splice(index, 1);
+      toasts.value.splice(index, 1)
     }
   }
 
   function success(message: string, duration?: number) {
-    return showToast(message, 'success', duration);
+    return showToast(message, 'success', duration)
   }
 
   function error(message: string, duration?: number) {
-    return showToast(message, 'error', duration);
+    return showToast(message, 'error', duration)
   }
 
   function info(message: string, duration?: number) {
-    return showToast(message, 'info', duration);
+    return showToast(message, 'info', duration)
   }
 
   function warning(message: string, duration?: number) {
-    return showToast(message, 'warning', duration);
+    return showToast(message, 'warning', duration)
   }
 
   return {
@@ -64,5 +64,5 @@ export function useToast() {
     error,
     info,
     warning,
-  };
+  }
 }

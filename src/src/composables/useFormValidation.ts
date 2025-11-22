@@ -2,10 +2,10 @@
  * Form validation composable using VeeValidate
  */
 
-import { toTypedSchema } from '@vee-validate/yup';
-import * as yup from 'yup';
-import { PAYMENT_MODES, MIN_RENT_AMOUNT, MAX_RENT_AMOUNT } from '../utils/constants';
-import { isValidPAN } from '../utils/validation';
+import { toTypedSchema } from '@vee-validate/yup'
+import * as yup from 'yup'
+import { PAYMENT_MODES, MIN_RENT_AMOUNT, MAX_RENT_AMOUNT } from '../utils/constants'
+import { isValidPAN } from '../utils/validation'
 
 /**
  * Validation schema for receipt form using Yup
@@ -37,7 +37,7 @@ export const receiptValidationSchema = toTypedSchema(
       .required('Landlord PAN is required')
       .length(10, 'PAN must be exactly 10 characters')
       .test('is-valid-pan', 'PAN must be in format AAAAA9999A', (value) => {
-        return value ? isValidPAN(value) : false;
+        return value ? isValidPAN(value) : false
       }),
 
     propertyAddress: yup
@@ -52,46 +52,50 @@ export const receiptValidationSchema = toTypedSchema(
       .min(MIN_RENT_AMOUNT, `Rent amount must be at least ₹${MIN_RENT_AMOUNT}`)
       .max(MAX_RENT_AMOUNT, `Rent amount must not exceed ₹${MAX_RENT_AMOUNT}`)
       .test('is-positive', 'Rent amount must be positive', (value) => {
-        return value ? value > 0 : false;
+        return value ? value > 0 : false
       }),
 
     rentalPeriodStart: yup
       .string()
       .required('Rental period start date is required')
       .test('is-valid-date', 'Invalid date', (value) => {
-        return value ? !isNaN(new Date(value).getTime()) : false;
+        return value ? !isNaN(new Date(value).getTime()) : false
       }),
 
     rentalPeriodEnd: yup
       .string()
       .required('Rental period end date is required')
       .test('is-valid-date', 'Invalid date', (value) => {
-        return value ? !isNaN(new Date(value).getTime()) : false;
+        return value ? !isNaN(new Date(value).getTime()) : false
       })
       .test('is-after-start', 'End date must be after start date', function (value) {
-        const { rentalPeriodStart } = this.parent;
-        if (!value || !rentalPeriodStart) return true;
-        return new Date(value) > new Date(rentalPeriodStart);
+        const { rentalPeriodStart } = this.parent
+        if (!value || !rentalPeriodStart) return true
+        return new Date(value) > new Date(rentalPeriodStart)
       }),
 
     paymentDate: yup
       .string()
       .required('Payment date is required')
       .test('is-valid-date', 'Invalid date', (value) => {
-        return value ? !isNaN(new Date(value).getTime()) : false;
+        return value ? !isNaN(new Date(value).getTime()) : false
       })
-      .test('is-after-start', 'Payment date should not be before rental period start', function (value) {
-        const { rentalPeriodStart } = this.parent;
-        if (!value || !rentalPeriodStart) return true;
-        return new Date(value) >= new Date(rentalPeriodStart);
-      }),
+      .test(
+        'is-after-start',
+        'Payment date should not be before rental period start',
+        function (value) {
+          const { rentalPeriodStart } = this.parent
+          if (!value || !rentalPeriodStart) return true
+          return new Date(value) >= new Date(rentalPeriodStart)
+        },
+      ),
 
     paymentMode: yup
       .string()
       .required('Payment mode is required')
       .oneOf([...PAYMENT_MODES], 'Invalid payment mode'),
-  })
-);
+  }),
+)
 
 /**
  * Individual field validation functions
@@ -101,65 +105,65 @@ export const validators = {
    * Validate required field
    */
   required: (value: string) => {
-    return value && value.trim().length > 0;
+    return value && value.trim().length > 0
   },
 
   /**
    * Validate minimum length
    */
   minLength: (value: string, min: number) => {
-    return value && value.trim().length >= min;
+    return value && value.trim().length >= min
   },
 
   /**
    * Validate maximum length
    */
   maxLength: (value: string, max: number) => {
-    return value && value.trim().length <= max;
+    return value && value.trim().length <= max
   },
 
   /**
    * Validate pattern
    */
   pattern: (value: string, pattern: RegExp) => {
-    return pattern.test(value);
+    return pattern.test(value)
   },
 
   /**
    * Validate PAN number
    */
   pan: (value: string) => {
-    return isValidPAN(value);
+    return isValidPAN(value)
   },
 
   /**
    * Validate number within range
    */
   numberInRange: (value: number, min?: number, max?: number) => {
-    if (isNaN(value)) return false;
-    if (min !== undefined && value < min) return false;
-    if (max !== undefined && value > max) return false;
-    return true;
+    if (isNaN(value)) return false
+    if (min !== undefined && value < min) return false
+    if (max !== undefined && value > max) return false
+    return true
   },
 
   /**
    * Validate date range (start before end)
    */
   dateRange: (start: string | Date, end: string | Date) => {
-    const startDate = typeof start === 'string' ? new Date(start) : start;
-    const endDate = typeof end === 'string' ? new Date(end) : end;
-    return endDate > startDate;
+    const startDate = typeof start === 'string' ? new Date(start) : start
+    const endDate = typeof end === 'string' ? new Date(end) : end
+    return endDate > startDate
   },
 
   /**
    * Validate payment date logic
    */
   paymentDateLogic: (paymentDate: string | Date, periodStart: string | Date) => {
-    const payment = typeof paymentDate === 'string' ? new Date(paymentDate) : paymentDate;
-    const start = typeof periodStart === 'string' ? new Date(periodStart) : periodStart;
-    return payment >= start;
+    const payment = typeof paymentDate === 'string' ? new Date(paymentDate) : paymentDate
+    const start = typeof periodStart === 'string' ? new Date(periodStart) : periodStart
+    return payment >= start
   },
-};
+}
 
 /**
  * Get error messages for specific validation failures
@@ -216,9 +220,9 @@ export function getErrorMessage(field: string, rule: string): string {
       required: 'Payment mode is required',
       invalid: 'Invalid payment mode',
     },
-  };
+  }
 
-  return messages[field]?.[rule] || 'Invalid value';
+  return messages[field]?.[rule] || 'Invalid value'
 }
 
 /**
@@ -229,5 +233,5 @@ export function useFormValidation() {
     schema: receiptValidationSchema,
     validators,
     getErrorMessage,
-  };
+  }
 }

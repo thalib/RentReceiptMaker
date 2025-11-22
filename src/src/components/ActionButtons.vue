@@ -1,11 +1,14 @@
 <template>
-  <div class="w-100 container px-3 py-4 d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center" style="max-width: 56rem;">
+  <div
+    class="w-100 container px-3 py-4 d-flex flex-column flex-sm-row gap-3 justify-content-center align-items-center"
+    style="max-width: 56rem"
+  >
     <button
       type="button"
       @click="handleDownload"
       :disabled="!canDownload || isDownloading"
       class="btn btn-success btn-lg px-4 py-2 fw-semibold shadow btn-hover-lift"
-      style="width: 100%; min-width: auto;"
+      style="width: 100%; min-width: auto"
     >
       {{ isDownloading ? 'Downloading...' : '📥 Download PNG' }}
     </button>
@@ -14,7 +17,7 @@
       @click="handleCopy"
       :disabled="!canDownload"
       class="btn btn-primary btn-lg px-4 py-2 fw-semibold shadow btn-hover-lift"
-      style="width: 100%; min-width: auto;"
+      style="width: 100%; min-width: auto"
     >
       📋 Copy Image
     </button>
@@ -22,32 +25,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from 'vue'
 
 defineProps<{
-  hasData: boolean;
-  isValid: boolean;
-  canDownload: boolean;
-}>();
+  hasData: boolean
+  isValid: boolean
+  canDownload: boolean
+}>()
 
 const emit = defineEmits<{
-  download: [];
-  copy: [];
-}>();
+  download: []
+  copy: []
+}>()
 
-const isDownloading = ref(false);
+const isDownloading = ref(false)
 
 async function handleDownload() {
-  isDownloading.value = true;
-  emit('download');
+  isDownloading.value = true
+  emit('download')
   // Reset after a short delay
   setTimeout(() => {
-    isDownloading.value = false;
-  }, 1000);
+    isDownloading.value = false
+  }, 1000)
 }
 
 function handleCopy() {
-  emit('copy');
+  emit('copy')
 }
 </script>
 

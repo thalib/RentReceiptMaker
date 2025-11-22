@@ -15,9 +15,9 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from '../composables/useToast';
+import { useToast } from '../composables/useToast'
 
-const { toasts, removeToast } = useToast();
+const { toasts, removeToast } = useToast()
 
 function getIcon(type: string): string {
   const icons = {
@@ -25,8 +25,8 @@ function getIcon(type: string): string {
     error: '✕',
     warning: '⚠',
     info: 'ℹ',
-  };
-  return icons[type as keyof typeof icons] || 'ℹ';
+  }
+  return icons[type as keyof typeof icons] || 'ℹ'
 }
 </script>
 
@@ -51,7 +51,9 @@ function getIcon(type: string): string {
   max-width: 500px;
   background: white;
   border-radius: 0.5rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 2px 4px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   pointer-events: auto;
   transition: all 0.3s ease;
@@ -59,7 +61,9 @@ function getIcon(type: string): string {
 
 .toast:hover {
   transform: translateX(-4px);
-  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15), 0 3px 6px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 6px 8px rgba(0, 0, 0, 0.15),
+    0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
 .toast-icon {
